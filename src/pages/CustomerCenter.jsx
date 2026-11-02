@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PhoneCall, MessageSquare, MessageSquareMore, ChevronRight, Search, Check, Plus } from 'lucide-react';
+import { PhoneCall, MessageSquare, ChevronRight, Search, Check, Plus } from 'lucide-react';
 import { ExperienceHeader, ExperienceSignature } from '../components/ExperienceLayout';
-import { asset } from '../components/FarmUI';
+import { asset, Icon } from '../components/FarmUI';
 
 const faqs = [
   { category: '미니팜 사용', question: '물은 어떻게 보충하나요?', answer: '제품의 물통을 열고 최대 수위선을 넘지 않게 물을 채운 뒤 제자리에 장착해 주세요. 실제 제품의 사용설명서를 우선 확인하세요. 팜이 상담에서 물 보충 과정을 체험할 수 있어요.', link: '/chat', label: '팜이에게 물어보기' },
@@ -27,8 +27,8 @@ export default function CustomerCenter() {
       <h2>어떤 도움이 필요하세요?</h2>
       <p className="experience-muted">자주 묻는 질문을 살펴보세요.</p>
       <div className="support-contact-cards">
-        <a className="support-contact-card" href="tel:15884113"><div><h3>전화 상담</h3><p>웰스 고객센터로 문의해 주세요</p></div><PhoneCall size={43} fill="currentColor" strokeWidth={1.4} /></a>
-        <Link className="support-contact-card" to="/chat"><div><h3>상담톡 문의</h3><p>쉽고 간편한 궁금증 해결</p></div><span className="support-chat-icon"><MessageSquareMore size={43} /></span></Link>
+        <a className="support-contact-card" href="tel:15884113"><div><h3>전화 상담</h3><p>웰스 고객센터로 문의해 주세요</p></div><Icon name="headset" size={43} /></a>
+        <Link className="support-contact-card" to="/chat"><div><h3>상담톡 문의</h3><p>쉽고 간편한 궁금증 해결</p></div><span className="support-chat-icon"><Icon name="message" size={43} /></span></Link>
       </div>
       <nav className="support-links" aria-label="고객센터 메뉴">
         <Link to="/support/faq">자주 묻는 질문 (FAQ)<ChevronRight size={18} /></Link>

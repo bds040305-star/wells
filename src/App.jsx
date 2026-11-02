@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, Routes, Route, Navigate } from "react-router-dom";
-import { asset, vegetables, Icon, Brand } from "./components/FarmUI";
+import { asset, vegetables, Icon, Brand, SocialIcon } from "./components/FarmUI";
 import Landing from "./pages/Landing";
 import Login, { LoginComplete, AccountHelp } from "./pages/Login";
 import AIWelcome from "./pages/AIWelcome";
@@ -442,7 +442,7 @@ export default function App() {
           ))}
         </nav>
         <div className="social-links">
-          {["YouTube", "Instagram", "Facebook"].map((name, i) => (
+          {["YouTube", "Instagram", "Facebook"].map((name) => (
             <button
               key={name}
               aria-label={name}
@@ -453,7 +453,7 @@ export default function App() {
                 )
               }
             >
-              {["▶", "◎", "f"][i]}
+              <SocialIcon name={name} />
             </button>
           ))}
         </div>
