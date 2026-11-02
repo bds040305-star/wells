@@ -23,10 +23,12 @@ export default function Login({ onLogin }) {
     event.preventDefault();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError('email');
+      document.getElementById('demo-email')?.focus();
       return;
     }
     if (email.trim().toLowerCase() !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
       setError('password');
+      document.getElementById('demo-password')?.focus();
       return;
     }
     setPassword('');
@@ -62,7 +64,7 @@ export default function Login({ onLogin }) {
         <button className="social-login naver" onClick={() => setSocialNotice('네이버 로그인은 데모 화면입니다. 체험 계정 채우기로 이용해 주세요.')}><b aria-hidden="true">N</b>네이버로 계속하기</button>
         <button className="social-login google" onClick={() => setSocialNotice('Google 로그인은 데모 화면입니다. 체험 계정 채우기로 이용해 주세요.')}><b aria-hidden="true">G</b>Google로 계속하기</button>
       </div>
-      {socialNotice && <p className="login-status" role="status">{socialNotice}</p>}
+      {socialNotice && <div className="login-status" role="status"><p>{socialNotice}</p>{!socialNotice.startsWith('체험 계정') && <button type="button" onClick={fillDemo}>체험 계정으로 계속하기</button>}</div>}
       <p className="experience-account-link">아직 계정이 없나요? <Link to="/signup">회원가입하기</Link></p>
     </div>
     <ExperienceSignature />

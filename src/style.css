@@ -1720,3 +1720,79 @@ p {
 .chat-request-error { border-radius: 12px; background: #fff6ed; color: #79502c; padding: 10px 12px; margin: 8px 0; }
 .chat-request-error p { font-size: 12px; line-height: 1.5; }
 .chat-request-error button { padding: 8px 0 0; background: transparent; text-decoration: underline; font-size: 12px; }
+
+/* Customer center follows the supplied 390px artboard. */
+.support-page .experience-header { min-height: 88px; }
+.support-content { padding: 24px 24px 30px; flex: 1; display: flex; flex-direction: column; }
+.support-content > h2 { font-size: 24px; letter-spacing: -.8px; margin-bottom: 12px; }
+.support-contact-cards { display: grid; gap: 12px; margin-top: 28px; }
+.support-contact-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 100px; padding: 20px 24px; border-radius: 16px; background: #ffffffbd; text-decoration: none; }
+.support-contact-card h3 { font-size: 18px; color: #171e19; }
+.support-contact-card p { color: #7a867d; font-size: 11px; margin-top: 10px; line-height: 1.6; }
+.support-contact-card > svg { color: #208d35; flex-shrink: 0; }
+.support-links { display: grid; margin: 18px 0 48px; }
+.support-links a { display: flex; align-items: center; justify-content: space-between; min-height: 66px; font-size: 14px; text-decoration: none; }
+.support-fami-card { display: flex; flex-direction: column; justify-content: center; min-height: 104px; position: relative; border-radius: 16px; background: #ffffffb8; padding: 22px 90px 22px 24px; text-decoration: none; margin-top: auto; }
+.support-fami-card strong { font-size: 18px; letter-spacing: -.6px; }
+.support-fami-card span { font-size: 12px; color: #689275; margin-top: 7px; }
+.support-fami-card img { position: absolute; right: 18px; top: -20px; width: 82px; height: 100px; object-fit: contain; }
+.support-detail-content { padding: 20px 24px 30px; }
+.support-detail-content > h2 { font-size: 22px; letter-spacing: -.6px; }
+.faq-search { display: flex; align-items: center; gap: 10px; border: 1px solid #cfdfd2; border-radius: 14px; background: #fff; padding: 0 14px; margin: 24px 0 16px; color: #63836c; }
+.faq-search input { min-width: 0; width: 100%; min-height: 48px; font-size: 16px; border: 0; background: transparent; }
+.faq-search input::placeholder { font-size: 12px; }
+.faq-categories { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.faq-categories button { min-height: 40px; padding: 8px 11px; border-radius: 20px; background: #fff; color: #607567; font-size: 12px; border: 1px solid #dce8dd; }
+.faq-categories button[aria-pressed="true"] { background: #208d35; color: #fff; border-color: #208d35; }
+.faq-list { margin-top: 12px; }
+.faq-list details { border-bottom: 1px solid #dbe9dd; }
+.faq-list summary { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 20px 0; cursor: pointer; font-size: 14px; font-weight: 600; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary svg { flex-shrink: 0; transition: transform .2s; }
+.faq-list details[open] summary svg { transform: rotate(45deg); }
+.faq-list details p { font-size: 13px; line-height: 1.9; color: #65786b; padding: 0 0 16px; }
+.faq-list details a { display: inline-flex; align-items: center; min-height: 44px; gap: 6px; font-size: 13px; color: #208d35; margin-bottom: 10px; }
+.support-next { margin-top: 30px; font-size: 13px; }
+.support-empty { display: flex; align-items: center; flex-direction: column; gap: 18px; text-align: center; padding: 40px 10px; color: #65806c; }
+.support-empty h2 { font-size: 19px; color: #294b34; }
+.support-empty p { font-size: 13px; }
+.support-center-link { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; background: transparent; color: #208d35; margin: 8px 0 16px; font-weight: 600; }
+.inquiry-tabs { display: flex; border-bottom: 1px solid #dce8de; margin-bottom: 20px; }
+.inquiry-tabs button { flex: 1; min-height: 48px; font-size: 14px; background: transparent; color: #718177; border-bottom: 2px solid transparent; }
+.inquiry-tabs button[aria-pressed="true"] { border-color: #208d35; color: #208d35; font-weight: 700; }
+.support-demo-note { font-size: 12px; color: #6d8173; line-height: 1.8; background: #f0f7ef; border-radius: 12px; padding: 14px; }
+.support-status { display: flex; gap: 8px; font-size: 13px; line-height: 1.7; color: #208d35; padding: 16px 0; }
+.support-status svg { flex-shrink: 0; margin-top: 2px; }
+.inquiry-form { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.inquiry-form label { margin-top: 8px; font-size: 13px; font-weight: 600; }
+.inquiry-form input, .inquiry-form select, .inquiry-form textarea { width: 100%; min-width: 0; border: 1px solid #d4e3d6; background: #fff; padding: 14px; border-radius: 12px; font: inherit; font-size: 16px; color: #294b34; }
+.inquiry-form textarea { resize: vertical; }
+.inquiry-form input::placeholder, .inquiry-form textarea::placeholder { font-size: 13px; }
+.inquiry-count { align-self: flex-end; font-size: 11px; color: #748077; }
+.inquiry-form > button { margin-top: 12px; }
+.inquiry-list article { background: #fff; border-radius: 16px; padding: 20px; margin-top: 16px; overflow-wrap: anywhere; }
+.inquiry-badge { display: inline-block; font-size: 11px; color: #208d35; border-radius: 12px; background: #edf8ed; padding: 5px 8px; margin-bottom: 12px; }
+.inquiry-list summary { font-size: 15px; font-weight: 600; line-height: 1.7; cursor: pointer; }
+.inquiry-list details p { font-size: 13px; color: #667b6d; line-height: 1.8; white-space: pre-wrap; margin-top: 14px; }
+.inquiry-list small { font-size: 11px; color: #829087; display: block; margin-top: 16px; }
+.inquiry-delete { background: transparent; color: #7e6b66; min-height: 44px; font-size: 12px; text-decoration: underline; }
+.inquiry-delete-confirm { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-size: 12px; margin-top: 12px; }
+.inquiry-delete-confirm button { min-height: 44px; background: transparent; color: #208d35; text-decoration: underline; }
+.support-real-contact { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 12px; line-height: 1.7; margin-top: 32px; min-height: 44px; color: #63806b; }
+.login-status button { background: transparent; text-decoration: underline; color: #208d35; min-height: 44px; font-size: 13px; }
+@media (max-width: 359px) {
+  .support-content, .support-detail-content { padding-left: 20px; padding-right: 20px; }
+  .support-content > h2 { font-size: 22px; }
+  .support-contact-card { padding: 18px; }
+  .support-fami-card { padding-left: 18px; }
+  .support-fami-card strong { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}
+.support-chat-icon { display: grid; place-items: center; color: #208d35; }
+.support-chat-icon svg { fill: #208d35; stroke: #fff; stroke-width: 1.5; }
+.support-fami-card img, .welcome-mascot, .success-mascot img, .message-tools img { mix-blend-mode: multiply; }
+textarea:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid #30a866; outline-offset: 4px; }
+.model-zoom { display: flex; justify-content: center; gap: 8px; margin: 10px 0; }
+.model-zoom button { min-height: 44px; padding: 8px 18px; border: 1px solid #cfdfd2; border-radius: 24px; background: #fff; color: #315940; font-size: 12px; }

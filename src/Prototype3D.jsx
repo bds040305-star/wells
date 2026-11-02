@@ -103,6 +103,10 @@ export default function Prototype3D() {
               조립 상태로
             </button>
           </div>
+          <div className="model-zoom" aria-label="3D 모델 확대 축소">
+            <button disabled={!ready || !!error} aria-label="3D 모델 축소" onClick={() => viewer.current?.zoomBy(1)}>− 축소</button>
+            <button disabled={!ready || !!error} aria-label="3D 모델 확대" onClick={() => viewer.current?.zoomBy(-1)}>+ 확대</button>
+          </div>
           <small>
             사진을 참고한 시연용 모델이며 실제 CAD 구조와 다를 수 있습니다.
           </small>

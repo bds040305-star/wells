@@ -6,6 +6,7 @@ import Login, { LoginComplete, AccountHelp } from "./pages/Login";
 import AIWelcome from "./pages/AIWelcome";
 import FarmChat, { initialConversation } from "./pages/FarmChat";
 import Register from "./pages/Register";
+import CustomerCenter, { FAQ, Inquiries } from "./pages/CustomerCenter";
 
 const pages = [
   ["/", "홈"],
@@ -18,7 +19,7 @@ const pages = [
 
 const sectionPaths = {
   "/products": "products", "/inside": "products", "/structure": "structure",
-  "/how-it-works": "system", "/seed": "vegetables", "/support": "customer",
+  "/how-it-works": "system", "/seed": "vegetables",
 };
 
 function BottomSheet({ title, children, onClose, kind = "" }) {
@@ -312,7 +313,7 @@ export default function App() {
   });
   const [farm, setFarm] = useState({ name: "쑥쑥이", plant: "청경채", registered: false });
   const [messages, setMessages] = useState([...initialConversation]);
-  const immersive = ["/ai", "/chat", "/login", "/login/complete", "/register", "/signup", "/reset-password"].includes(location.pathname);
+  const immersive = location.pathname.startsWith("/support") || ["/ai", "/chat", "/login", "/login/complete", "/register", "/signup", "/reset-password"].includes(location.pathname);
   const [device, setDevice] = useState({
     waterLevel: "low",
     power: false,
@@ -340,7 +341,7 @@ export default function App() {
     if (location.pathname === "/" && Object.values(sectionPaths).includes(section)) {
       requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: "instant" }));
     } else window.scrollTo({ top: 0, behavior: "instant" });
-    const label = ({ "/ai": "팜이", "/chat": "팜이 상담", "/login": "로그인", "/login/complete": "로그인 완료", "/register": "미니팜 등록", "/signup": "회원가입 안내", "/reset-password": "비밀번호 안내" })[location.pathname] || pages.find(([path]) => path === location.pathname)?.[1] || "홈";
+    const label = ({ "/ai": "팜이", "/chat": "팜이 상담", "/login": "로그인", "/login/complete": "로그인 완료", "/support": "고객센터", "/support/faq": "자주 묻는 질문", "/support/inquiries": "1:1 문의", "/register": "미니팜 등록", "/signup": "회원가입 안내", "/reset-password": "비밀번호 안내" })[location.pathname] || pages.find(([path]) => path === location.pathname)?.[1] || "홈";
     document.title = `${label} · Mini Farm — 비공식 디자인 데모`;
   }, [location.pathname, location.search, location.hash]);
   const openControl = (name = "power") => {
@@ -396,6 +397,9 @@ export default function App() {
           ))}
           <Route path="/control" element={landing} />
           <Route path="/menu" element={landing} />
+          <Route path="/support" element={<CustomerCenter />} />
+          <Route path="/support/faq" element={<FAQ />} />
+          <Route path="/support/inquiries" element={<Inquiries />} />
           <Route path="/ai" element={<AIWelcome loggedIn={loggedIn} />} />
           <Route path="/chat" element={<FarmChat messages={messages} setMessages={setMessages} farm={{ ...farm, plant: device.mode }} device={device} setDevice={setDevice} openControl={openControl} />} />
           <Route path="/login" element={<Login onLogin={() => setLoggedIn(true)} />} />

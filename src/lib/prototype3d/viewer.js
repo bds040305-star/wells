@@ -289,6 +289,7 @@ export function mountViewer({ canvas, stage, journey, onProgress = () => {} }) {
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(stage);
   resize();
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
   let last = performance.now();
   function frame(now) {
     if (stopped) return;
@@ -300,7 +301,9 @@ export function mountViewer({ canvas, stage, journey, onProgress = () => {} }) {
     }
     const dt = Math.min(0.06, (now - last) / 1000);
     last = now;
-    amount += (targetAmount - amount) * (1 - Math.exp(-dt * 7));
+    amount = motionPreference.matches
+      ? targetAmount
+      : amount + (targetAmount - amount) * (1 - Math.exp(-dt * 7));
     if (Math.abs(targetAmount - amount) < 0.0001) amount = targetAmount;
     const delayed = THREE.MathUtils.clamp((amount - 0.03) / (1 - 0.03), 0, 1);
     for (const p of parts) {
@@ -312,6 +315,7 @@ export function mountViewer({ canvas, stage, journey, onProgress = () => {} }) {
         : zoom * (1 + delayed * 0.15);
     renderer.render(scene, camera);
     canvas.dataset.progress = amount.toFixed(3);
+    canvas.dataset.zoom = String(zoom);
     canvas.dataset.rotation = `${angleX.toFixed(3)},${angleY.toFixed(3)}`;
     canvas.dataset.ready = "true";
   }
@@ -320,6 +324,11 @@ export function mountViewer({ canvas, stage, journey, onProgress = () => {} }) {
     setProgress(value) {
       targetAmount = THREE.MathUtils.clamp(value, 0, 1);
       onProgress(targetAmount);
+    },
+    zoomBy(direction) {
+      zoom = THREE.MathUtils.clamp(zoom + direction, 10, 24);
+      resize();
+      return zoom;
     },
     setView(view) {
       angleX = 0.08;

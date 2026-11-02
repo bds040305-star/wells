@@ -12,6 +12,6 @@ export default function Landing({ onNavigate, openControl, info, onSelect }) {
     <Structure onNavigate={onNavigate} />
     <GrowingSystem openControl={openControl} info={info} />
     <Seed onSelect={onSelect} openControl={openControl} />
-    <Support info={info} />
+    <Support info={info} onNavigate={onNavigate} />
   </>;
 }

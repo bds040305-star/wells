@@ -1,6 +1,6 @@
 import { Icon } from "../components/FarmUI";
 
-export default function Support({ info }) {
+export default function Support({ info, onNavigate }) {
   return (
     <>
         <section
@@ -30,6 +30,7 @@ export default function Support({ info }) {
           </div>
           <div className="customer-contact">
             <h2>고객센터</h2>
+            <button className="support-center-link" onClick={() => onNavigate("/support")}>고객센터 바로가기 <Icon name="arrow" size={16} /></button>
             <a className="phone-number" href="tel:15884113">
               1588-4113
             </a>
@@ -49,13 +50,7 @@ export default function Support({ info }) {
               ].map(([icon, title]) => (
                 <button
                   key={title}
-                  onClick={() =>
-                    info(
-                      title,
-                      "평일 09:00~18:00, 토요일 09:00~13:00에 고객센터로 문의해 주세요.",
-                      true,
-                    )
-                  }
+                  onClick={() => title === "1:1문의" ? onNavigate("/support/inquiries") : info(title, "평일 09:00~18:00, 토요일 09:00~13:00에 고객센터로 문의해 주세요.", true)}
                 >
                   <span>
                     <Icon name={icon} size={30} />

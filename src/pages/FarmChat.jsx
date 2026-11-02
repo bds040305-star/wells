@@ -55,6 +55,8 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
   const bot = (text) => ({ role: 'assistant', text });
   const statusCard = (water = device.waterLevel, updated = false) => ({
     role: 'card', kind: 'status', water, updated,
+    name: farm.name, plant: farm.plant, registered: farm.registered,
+    temperature: device.temperature, light: device.light,
   });
   const showStatus = () => append(
     bot(`${farm.plant}가 건강하게 잘 자라고 있어요!`),
@@ -95,14 +97,16 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
     }
   };
   const chooseTopic = (topic) => {
+    setToolsOpen(false); setFeedback('');
     if (aiEnabled) { requestAI(topic); return; }
     append({ role: 'user', text: topic });
     if (topic === '미니팜 상태 확인') showStatus();
     else if (topic === '식물 키우기 고민') append(bot('어떤 채소를 키우고 계신가요? 빛과 물, 자라는 모습 중 궁금한 점을 알려주세요.'));
     else append(bot('오늘은 어떤 하루를 보내셨나요? 작은 정원을 돌보며 느낀 이야기도 들려주세요.'));
   };
-  const refill = (text = '물 채웠어! 다시 확인해줘') => {
+  const refill = (text = '물 채웠어! 다시 확인해줘', cardIndex = null) => {
     if (activeRequest.current) return;
+    if (cardIndex !== null) setMessages(current => current.map((message, index) => index === cardIndex ? { ...message, completed: true } : message));
     setDevice((d) => ({ ...d, waterLevel: 'enough' }));
     if (aiEnabled) { requestAI(text, false, { waterLevel: 'enough' }); return; }
     append({ role: 'user', text }, bot(`${farm.name} 상태를 다시 확인했어요.`),
@@ -133,7 +137,7 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
       append(bot('저는 작은 정원 친구 팜이에요! 미니팜을 돌보는 이야기도, 오늘의 일상 이야기도 함께 나눠요 🌱'));
     } else if (/물|급수|보충/.test(text)) {
       append(bot('물통의 수위를 먼저 확인해주세요.'), bot('아래 순서대로 천천히 따라 해보세요.'), { role: 'card', kind: 'water' });
-    } else if (/상태|다시 확인/.test(text)) showStatus();
+    } else if (/상태|다시 확인|미니팜.*궁금/.test(text)) showStatus();
     else if (/일상|오늘|마음/.test(text)) append(bot('오늘의 이야기를 들려주세요. 작은 정원을 가꾸듯, 잠시 쉬어가는 시간이 되어도 좋아요.'));
     else append(bot('함께 이야기할 주제를 골라주세요.'), { role: 'card', kind: 'topics' });
   };
@@ -171,12 +175,12 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
             <div className="conversation-card-heading"><h2>물을 채우는 순서</h2><span>관리 가이드</span></div>
             <p className="card-plant">{farm.plant} · 물 보충 안내</p>
             <ol className="water-instructions"><li>제품 안내에 따라 물통을 열어요</li><li>최대 수위선을 넘지 않게 채워요</li><li>물통을 제자리에 장착해요</li></ol>
-            <button className="experience-primary" disabled={pending} onClick={() => refill()}>물 보충했어요</button>
+            <button className="experience-primary" disabled={pending || message.completed} onClick={() => refill(undefined, index)}>{message.completed ? '물 보충 완료' : '물 보충했어요'}</button>
           </section>;
           return <section className="conversation-card" aria-label="미니팜 체험 상태" key={index}>
-            <div className="conversation-card-heading"><h2>{farm.name}{!message.updated && '♫'}</h2><span>{message.updated ? '방금 업데이트' : farm.registered ? '기기등록 완료' : '체험 미니팜'}</span></div>
-            <p className="card-plant">{farm.plant} · 키우는 중</p>
-            <dl className="farm-readings"><div><dt>온도</dt><dd>{device.temperature}°C</dd></div><div><dt>조명</dt><dd>{device.light > 0 ? '켜짐' : '꺼짐'}</dd></div><div><dt>물 잔량</dt><dd className="water-level">{message.water === 'enough' ? '충분' : '부족'}</dd></div></dl>
+            <div className="conversation-card-heading"><h2>{message.name ?? farm.name}{!message.updated && '♫'}</h2><span>{message.updated ? '방금 업데이트' : (message.registered ?? farm.registered) ? '기기등록 완료' : '체험 미니팜'}</span></div>
+            <p className="card-plant">{message.plant ?? farm.plant} · 키우는 중</p>
+            <dl className="farm-readings"><div><dt>온도</dt><dd>{message.temperature ?? device.temperature}°C</dd></div><div><dt>조명</dt><dd>{(message.light ?? device.light) > 0 ? '켜짐' : '꺼짐'}</dd></div><div><dt>물 잔량</dt><dd className="water-level">{message.water === 'enough' ? '충분' : '부족'}</dd></div></dl>
             {!message.updated && <button className="experience-outline" onClick={() => openControl('temperature')}>스마트 제어 열기</button>}
           </section>;
         }
@@ -222,7 +226,7 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
       </div>}
       <form className="farm-composer" onSubmit={(e) => { e.preventDefault(); send(input); }}>
         <button type="button" className="chat-plus" aria-label="대화 메뉴" aria-expanded={toolsOpen} onClick={() => setToolsOpen(!toolsOpen)}>{toolsOpen ? <X size={20} /> : <Plus size={20} />}</button>
-        <input ref={composer} type="text" aria-label="팜이에게 묻기" placeholder="팜이에게 묻기" value={input} onChange={(e) => setInput(e.target.value)} enterKeyHint="send" autoComplete="off" maxLength={1000} />
+        <input ref={composer} type="text" aria-label="팜이에게 묻기" placeholder="팜이에게 묻기" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && (e.nativeEvent.isComposing || e.keyCode === 229)) e.preventDefault(); }} enterKeyHint="send" autoComplete="off" maxLength={1000} />
         <button type="submit" className="chat-send" aria-label="메시지 보내기" disabled={!input.trim() || pending}><ArrowUp size={23} /></button>
       </form>
       <ExperienceSignature aiConnected={aiEnabled} />

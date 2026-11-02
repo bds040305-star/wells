@@ -1,0 +1,58 @@
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+// Run against an isolated Chromium profile: this exercises and clears demo-only tab storage.
+const outputDir = process.env.PREVIEW_DIR || '/tmp/wells-ui-previews';
+await mkdir(outputDir, { recursive: true });
+const appUrl = process.env.APP_URL || 'http://127.0.0.1:5173/wells/';
+const tabs=await (await fetch((process.env.CDP_URL || 'http://127.0.0.1:9222') + '/json')).json();
+const ws=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl); await new Promise(r=>ws.onopen=r);
+let id=0; const pending=new Map(); const errors=[];
+ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){pending.get(m.id)?.(m);pending.delete(m.id)}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.text+': '+m.params.exceptionDetails.exception?.description)};
+const call=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,m=>m.error?reject(Error(JSON.stringify(m.error))):resolve(m.result));ws.send(JSON.stringify({id:n,method,params}))});
+const ev=async expression=>{const m=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(m.exceptionDetails)throw Error(JSON.stringify(m.exceptionDetails));return m.result.value};
+const wait=async expression=>{for(let i=0;i<60;i++){if(await ev(`!!(${expression})`))return; await new Promise(r=>setTimeout(r,150));}throw Error('Timeout: '+expression)};
+const route=async path=>{await ev(`location.hash=${JSON.stringify('#'+path)}`);await wait(`location.hash===${JSON.stringify('#'+path)}`);await new Promise(r=>setTimeout(r,180));};
+const click=async label=>{await ev(`(()=>{const el=[...document.querySelectorAll('button,a')].find(e=>e.textContent.trim().endsWith(${JSON.stringify(label)})||e.getAttribute('aria-label')===${JSON.stringify(label)});if(!el)throw Error('Missing button '+${JSON.stringify(label)});el.click()})()`);await new Promise(r=>setTimeout(r,120));};
+const fill=async (selector,value)=>ev(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(el.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set.call(el,${JSON.stringify(value)});el.dispatchEvent(new Event('input',{bubbles:true}))})()`);
+const shot=async name=>{await ev('document.activeElement?.blur()');await new Promise(r=>setTimeout(r,100));const s=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(outputDir+'/'+name+'.png',Buffer.from(s.data,'base64'));};
+const check=async (expression,label)=>{assert(await ev(expression),label);console.log('PASS',label)};
+try {
+await call('Runtime.enable');await call('Page.enable');await call('Page.bringToFront');await call('Emulation.setFocusEmulationEnabled',{enabled:true});await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});
+await call('Page.navigate',{url:appUrl+'#/support'});
+await wait('document.querySelector(".support-fami-card")');await ev('sessionStorage.removeItem("wells_demo_inquiries")');await shot('01-customer-center');
+await check('document.querySelector(".support-contact-card").getAttribute("href")==="tel:15884113"','phone action');
+await click('자주 묻는 질문 (FAQ)');await wait('document.querySelector(".faq-search")');
+await fill('.faq-search input','물');await wait('document.querySelectorAll(".faq-list details").length>0');
+await ev('document.querySelector(".faq-list summary").click()');await check('document.querySelector(".faq-list details").open','FAQ expands');await shot('02-faq');
+await fill('.faq-search input','없는검색결과123');await check('document.querySelector(".support-empty")!==null','FAQ empty result');await click('전체 질문 보기');await check('document.querySelectorAll(".faq-list details").length===6','FAQ search reset');
+await route('/support/inquiries');await click('문의 작성하기');await fill('#inquiry-title','조명 예약 체험 문의');await fill('#inquiry-body','조명 예약 설정 방법을 알고 싶어요.');await click('이 탭에 문의 저장하기');
+await check('document.querySelectorAll(".inquiry-list article").length===1','inquiry saved');await shot('03-inquiries');
+await call('Page.reload');await new Promise(r=>setTimeout(r,600));await wait('document.querySelector(".inquiry-list article")');await check('document.body.innerText.includes("조명 예약 체험 문의")','inquiry survives reload');
+await click('삭제');await click('취소');await check('document.querySelectorAll(".inquiry-list article").length===1','delete cancellation');await click('삭제');await click('삭제 확인');await check('document.querySelectorAll(".inquiry-list article").length===0','inquiry deletion');
+await route('/login');await shot('04-login');await fill('#demo-email','minifarm.example.com');await fill('#demo-password','wrong');await click('로그인하기');await check('document.querySelector("#email-error")!==null','email validation');await shot('05-login-email-error');
+await fill('#demo-email','minifarm@example.com');await click('로그인하기');await check('document.querySelector("#password-error")!==null','password validation');await shot('06-login-password-error');
+await click('네이버로 계속하기');await check('document.querySelector(".login-status").innerText.includes("네이버")','Naver demo action');await click('Google로 계속하기');await check('document.querySelector(".login-status").innerText.includes("Google")','Google demo action');await click('카카오로 계속하기');await check('document.querySelector(".login-status").innerText.includes("데모")','social login explains demo');await click('체험 계정으로 계속하기');await click('로그인하기');await wait('location.hash==="#/login/complete"');await shot('07-login-complete');
+await click('내 미니팜 등록하기');await fill('#farm-name','새싹이');await click('체험 기기 등록하기');await wait('document.querySelector(".farm-composer")');
+await fill('.farm-composer input','내 미니팜이 궁금해');await click('메시지 보내기');await wait('document.querySelector(".farm-readings")');await shot('08-chat-status');
+await click('스마트 제어 열기');await wait('document.querySelector("dialog[open]")');await click('온도 1도 올리기');await check('document.querySelector(".temperature-circle output").innerText.includes("23")','temperature change');await click('전원');await click('미니팜 전원 켜기');await check('document.querySelector(".power-circle strong").innerText==="ON"','power control');
+await click('조명');await fill('.setting-card input[type=range]','0');await check('document.querySelector(".setting-card output").innerText==="0%"','light control');
+await click('급수');await click('급수 시작');await check('document.querySelector("[aria-label=급수]").getAttribute("aria-checked")==="true"','water control');
+await click('모드');await click('상추');await check('[...document.querySelectorAll(".mode-options button")].find(b=>b.textContent==="상추").getAttribute("aria-pressed")==="true"','plant mode control');
+await click('예약');await fill('#start-time','09:30');await click('예약 저장');await check('document.querySelector(".setting-card [role=status]").innerText.includes("09:30")','timer saved');
+await click('잠금');await click('버튼 잠그기');await click('온도');await check('document.querySelector(".stepper button").disabled','device lock prevents edits');await click('잠금 해제하기');await click('잠금 해제');await click('팝업 닫기');
+await check('document.querySelector(".farm-readings dd").innerText==="22°C"','past chat reading stays a snapshot');
+await fill('.farm-composer input','물은 어떻게 채워?');await click('메시지 보내기');await wait('document.querySelector(".water-instructions")');await shot('09-water-guide');await click('물 보충했어요');await wait('document.querySelectorAll(".farm-readings").length===2');await check('document.querySelectorAll(".water-level")[1].innerText==="충분"','water refill updates status');await check('[...document.querySelectorAll("button")].find(b=>b.textContent==="물 보충 완료").disabled','refill completion cannot be repeated');await shot('10-water-complete');
+await call('Browser.grantPermissions',{permissions:['clipboardReadWrite','clipboardSanitizedWrite'],origin:new URL(appUrl).origin});await click('답변 복사');await check('(async () => (await navigator.clipboard.readText()).length>0)()','copy answer');
+await call('Emulation.setDeviceMetricsOverride',{width:390,height:420,deviceScaleFactor:1,mobile:true});await wait('document.querySelector(".farm-composer").getBoundingClientRect().bottom<=innerHeight');console.log('PASS composer remains visible with reduced viewport');await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});
+await click('대화 메뉴');await click('새로운 대화');await check('document.querySelectorAll(".conversation-card").length===0','reset conversation');
+await route('/ai');await shot('11-ai-welcome');
+for(const width of [320,390,768]) {await call('Emulation.setDeviceMetricsOverride',{width,height:780,deviceScaleFactor:1,mobile:width<500});for(const path of ['/support','/support/faq','/support/inquiries','/login','/chat']){await route(path);await check('document.documentElement.scrollWidth<=innerWidth',`no horizontal overflow ${width} ${path}`)}}
+await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});await route('/?section=structure');await wait('document.querySelector("canvas[data-ready=true]")');
+await ev('document.querySelector(".model-journey").scrollIntoView({block:"start"})');await new Promise(r=>setTimeout(r,700));
+await ev('(()=>{const e=document.querySelector(".model-progress input");Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(e,"100");e.dispatchEvent(new Event("input",{bubbles:true}))})()');await wait('Number(document.querySelector("canvas").dataset.progress)>.98');await shot('12-3d-exploded');
+await click('뒷면');await wait('Number(document.querySelector("canvas").dataset.rotation.split(",")[1])>3');console.log('PASS 3D view rotates');
+await click('3D 모델 확대');await wait('document.querySelector("canvas").dataset.zoom==="14"');await click('3D 모델 축소');await wait('document.querySelector("canvas").dataset.zoom==="15"');console.log('PASS 3D zoom buttons');
+await ev('document.querySelector("canvas").focus()');await call('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight'});await wait('Number(document.querySelector("canvas").dataset.rotation.split(",")[1])>3.2');console.log('PASS 3D keyboard rotation');await click('조립 상태로');await wait('Number(document.querySelector("canvas").dataset.progress)<.02');await shot('13-3d-assembled');
+await check('document.querySelector(".model-progress output").innerText==="0%"','3D reassembly reset');
+assert.deepEqual(errors,[],'browser runtime exceptions');console.log('PASS no browser runtime exceptions');
+} finally { ws.close(); }
