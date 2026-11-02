@@ -189,7 +189,7 @@ export default function FarmChat({ messages, setMessages, farm, device, setDevic
         return <div className={`conversation-message ${message.role}`} key={index}>
           <p>{message.text}</p>
           {groupEnds && <div className="message-tools">
-            <img src={asset + 'fami.png'} alt="팜이" />
+            <img src={asset + 'fami.webp'} alt="팜이" />
             <button aria-label="답변 복사" onClick={() => copy(assistantText)}><Copy size={15} /></button>
             <button aria-label={speaking ? '읽어주기 중지' : '답변 읽어주기'} onClick={() => read(assistantText)}><Volume2 size={15} /></button>
           </div>}

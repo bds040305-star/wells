@@ -75,7 +75,7 @@ export function LoginComplete() {
   return <section className="experience-page login-complete">
     <ExperienceHeader title="로그인 완료" backTo="/" />
     <div className="login-complete-content">
-      <div className="success-mascot"><img src={asset + 'fami.png'} alt="다시 만나 반갑다고 인사하는 팜이" /><span aria-hidden="true">✦</span></div>
+      <div className="success-mascot"><img src={asset + 'fami.webp'} alt="다시 만나 반갑다고 인사하는 팜이" /><span aria-hidden="true">✦</span></div>
       <h2>로그인 완료</h2>
       <p className="experience-muted">궁금했던 식물 이야기부터 오늘의 일상까지<br />언제든 편하게 물어보세요.</p>
       <small className="experience-muted">체험 계정으로 로그인했어요.</small>

@@ -16,7 +16,7 @@ export default function Inside({ onChat }) {
             aria-label="AI 팜이에게 상담하기"
             onClick={() => onChat()}
           >
-            <img src={asset + "fami.png"} alt="팜이" />
+            <img src={asset + "fami.webp"} alt="팜이" />
           </button>
         </section>
         <section
@@ -59,6 +59,7 @@ export default function Inside({ onChat }) {
               {product === "wide" ? (
                 <img
                   src={asset + "wide-product.png"}
+                  width="265" height="205"
                   alt="채소가 자라는 와이드 12구 미니팜"
                 />
               ) : (

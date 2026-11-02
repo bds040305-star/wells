@@ -34,7 +34,7 @@ export default function CustomerCenter() {
         <Link to="/support/faq">자주 묻는 질문 (FAQ)<ChevronRight size={18} /></Link>
         <Link to="/support/inquiries">1:1 문의 / 내역 조회<ChevronRight size={18} /></Link>
       </nav>
-      <Link className="support-fami-card" to="/ai"><strong>AI 팜이에게 상담하기</strong><span>무엇이든 편하게 물어보세요</span><img src={asset + 'fami.png'} alt="정원 친구 팜이" /></Link>
+      <Link className="support-fami-card" to="/ai"><div><strong>AI 팜이에게 상담하기</strong><span>무엇이든 편하게 물어보세요</span></div><img src={asset + 'fami.webp'} alt="정원 친구 팜이" /></Link>
     </div>
     <ExperienceSignature />
   </section>;

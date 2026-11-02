@@ -510,9 +510,9 @@ export default function App() {
                 </button>
               ))}
               <button className="menu-ai" onClick={() => navigatePage("/ai")}>
-                <strong>AI 팜이에게 상담하기</strong>
-                <span>무엇이든 편하게 물어보세요</span>
-                <img src={asset + "fami.png"} alt="팜이" />
+                <div><strong>AI 팜이에게 상담하기</strong>
+                <span>무엇이든 편하게 물어보세요</span></div>
+                <img src={asset + "fami.webp"} alt="팜이" />
               </button>
               <div className="account-links">
                 <button onClick={loggedIn ? () => { setLoggedIn(false); setSheet(null); } : account}>{loggedIn ? "로그아웃" : "로그인"}</button>

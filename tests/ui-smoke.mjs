@@ -17,9 +17,9 @@ const fill=async (selector,value)=>ev(`(()=>{const el=document.querySelector(${J
 const shot=async name=>{await ev('document.activeElement?.blur()');await new Promise(r=>setTimeout(r,100));const s=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(outputDir+'/'+name+'.png',Buffer.from(s.data,'base64'));};
 const check=async (expression,label)=>{assert(await ev(expression),label);console.log('PASS',label)};
 try {
-await call('Runtime.enable');await call('Page.enable');await call('Page.bringToFront');await call('Emulation.setFocusEmulationEnabled',{enabled:true});await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});
+await call('Runtime.enable');await call('Page.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});await call('Page.bringToFront');await call('Emulation.setFocusEmulationEnabled',{enabled:true});await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});
 await call('Page.navigate',{url:appUrl+'#/support'});
-await wait('document.querySelector(".support-fami-card")');await ev('sessionStorage.removeItem("wells_demo_inquiries")');await shot('01-customer-center');
+await wait('location.hash==="#/support"');await call('Page.reload',{ignoreCache:true});await new Promise(r=>setTimeout(r,600));await wait('document.querySelector(".support-fami-card")');await ev('sessionStorage.removeItem("wells_demo_inquiries")');await shot('01-customer-center');
 await check('document.querySelector(".support-contact-card").getAttribute("href")==="tel:15884113"','phone action');
 await click('자주 묻는 질문 (FAQ)');await wait('document.querySelector(".faq-search")');
 await fill('.faq-search input','물');await wait('document.querySelectorAll(".faq-list details").length>0');
@@ -46,7 +46,7 @@ await call('Browser.grantPermissions',{permissions:['clipboardReadWrite','clipbo
 await call('Emulation.setDeviceMetricsOverride',{width:390,height:420,deviceScaleFactor:1,mobile:true});await wait('document.querySelector(".farm-composer").getBoundingClientRect().bottom<=innerHeight');console.log('PASS composer remains visible with reduced viewport');await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});
 await click('대화 메뉴');await click('새로운 대화');await check('document.querySelectorAll(".conversation-card").length===0','reset conversation');
 await route('/ai');await shot('11-ai-welcome');
-for(const width of [320,390,768]) {await call('Emulation.setDeviceMetricsOverride',{width,height:780,deviceScaleFactor:1,mobile:width<500});for(const path of ['/support','/support/faq','/support/inquiries','/login','/chat']){await route(path);await check('document.documentElement.scrollWidth<=innerWidth',`no horizontal overflow ${width} ${path}`)}}
+for(const width of [320,390,768]) {await call('Emulation.setDeviceMetricsOverride',{width,height:780,deviceScaleFactor:1,mobile:width<500});await call('Page.reload',{ignoreCache:true});await new Promise(r=>setTimeout(r,400));await check(`innerWidth===${width}`,`actual viewport is ${width}px`);for(const path of ['/support','/support/faq','/support/inquiries','/login','/chat']){await route(path);await check('document.documentElement.scrollWidth<=innerWidth',`no horizontal overflow ${width} ${path}`)}}
 await call('Emulation.setDeviceMetricsOverride',{width:390,height:780,deviceScaleFactor:2,mobile:true});await route('/?section=structure');await wait('document.querySelector("canvas[data-ready=true]")');
 await ev('document.querySelector(".model-journey").scrollIntoView({block:"start"})');await new Promise(r=>setTimeout(r,700));
 await ev('(()=>{const e=document.querySelector(".model-progress input");Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(e,"100");e.dispatchEvent(new Event("input",{bubbles:true}))})()');await wait('Number(document.querySelector("canvas").dataset.progress)>.98');await shot('12-3d-exploded');
