@@ -542,6 +542,7 @@ p {
   padding-bottom: 0;
 }
 .feature-stack {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -556,7 +557,7 @@ p {
 .moss-foreground {
   width: calc(100% + 48px);
   max-width: none;
-  margin: -14px -24px 0;
+  margin: 28px -24px 0;
   position: relative;
   pointer-events: none;
   mix-blend-mode: normal;
@@ -1894,3 +1895,28 @@ textarea:focus-visible, select:focus-visible, summary:focus-visible { outline: 3
 .customer-actions svg { color: #151a17; }
 .operation-tabs button { color: #2d9e4e; }
 .operation-tabs button[aria-selected="true"] { color: #208d35; }
+
+/* Feature cards rise into view once, without shifting the page layout. */
+.feature-card[data-reveal] {
+  transition: opacity 600ms ease, transform 680ms cubic-bezier(.22, 1, .36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.feature-card[data-reveal="waiting"] {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0) scale(.98);
+  pointer-events: none;
+}
+.feature-card[data-reveal="shown"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .feature-card[data-reveal] { transition: none; }
+  .feature-card[data-reveal="waiting"] { opacity: 1; transform: none; pointer-events: auto; }
+}
+.feature-card[data-reveal]:focus-visible {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  pointer-events: auto;
+}

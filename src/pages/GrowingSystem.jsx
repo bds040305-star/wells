@@ -1,5 +1,37 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { asset, Icon } from "../components/FarmUI";
+
+function FeatureCard({ children, className = "", delay = 0, ...props }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (motion.matches || !window.IntersectionObserver) {
+      setShown(true);
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        setShown(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.12, rootMargin: "0px 0px -24px 0px" });
+    observer.observe(ref.current);
+    const reduceMotion = () => {
+      if (motion.matches) { setShown(true); observer.disconnect(); }
+    };
+    motion.addEventListener("change", reduceMotion);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener("change", reduceMotion);
+    };
+  }, []);
+  return <button {...props} ref={ref} className={`feature-card ${className}`}
+    data-reveal={shown ? "shown" : "waiting"}
+    style={{ "--reveal-delay": `${delay}ms` }} onFocus={() => setShown(true)}>
+    {children}
+  </button>;
+}
 
 export default function GrowingSystem({ openControl, info }) {
   const [instruction, setInstruction] = useState(0);
@@ -24,8 +56,7 @@ export default function GrowingSystem({ openControl, info }) {
               Growing System
             </h2>
             <div className="system-grid">
-              <button
-                className="feature-card"
+              <FeatureCard
                 onClick={() => openControl("light")}
               >
                 <Icon name="bulb" size={34} />
@@ -35,9 +66,9 @@ export default function GrowingSystem({ openControl, info }) {
                   <br />
                   환경을 조성해요.
                 </p>
-              </button>
-              <button
-                className="feature-card"
+              </FeatureCard>
+              <FeatureCard
+                delay={90}
                 onClick={() => openControl("mode")}
               >
                 <Icon name="touch" size={34} />
@@ -46,21 +77,21 @@ export default function GrowingSystem({ openControl, info }) {
                   편리한 터치 버튼으로 손<br />
                   쉽게 조작하고 관리해요.
                 </p>
-              </button>
-              <button
-                className="feature-card glass full"
+              </FeatureCard>
+              <FeatureCard
+                className="glass full"
                 onClick={() => openControl("temperature")}
               >
                 <Icon name="temperature" size={34} />
                 <h3>스마트 온도 조절</h3>
                 <p>자동 쿨링 시스템으로 사계절 최적의 물온도를 조성해요.</p>
-              </button>
+              </FeatureCard>
             </div>
           </div>
           <div className="system-bottom" data-preview="system-details">
             <div className="system-grid">
-              <button
-                className="feature-card glass air-card"
+              <FeatureCard
+                className="glass air-card"
                 onClick={() =>
                   info(
                     "신선한 공기 공급",
@@ -75,10 +106,10 @@ export default function GrowingSystem({ openControl, info }) {
                   <br />
                   공기를 공급해요.
                 </p>
-              </button>
+              </FeatureCard>
               <div className="feature-stack">
-                <button
-                  className="feature-card"
+                <FeatureCard
+                  delay={70}
                   onClick={() =>
                     info(
                       "안심 무공해 배지",
@@ -88,9 +119,9 @@ export default function GrowingSystem({ openControl, info }) {
                 >
                   <Icon name="pot" size={34} />
                   <h3>안심 무공해 배지</h3>
-                </button>
-                <button
-                  className="feature-card"
+                </FeatureCard>
+                <FeatureCard
+                  delay={110}
                   onClick={() =>
                     info(
                       "투명 전면 도어",
@@ -100,7 +131,7 @@ export default function GrowingSystem({ openControl, info }) {
                 >
                   <Icon name="door" size={34} />
                   <h3>투명 전면 도어</h3>
-                </button>
+                </FeatureCard>
               </div>
             </div>
             <img

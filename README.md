@@ -67,3 +67,5 @@ node tests/ui-smoke.mjs
 히어로 글라스와 부유 모션은 독립 Chromium에서 `node tests/hero-glass.mjs`로 검증합니다. `APP_URL`, `CDP_URL`, `PREVIEW_DIR` 설정은 UI 검증과 같으며 기본 앱 주소는 개발 서버입니다. 문구가 박힌 원본 대신 `hero-garden-clean.webp` 위에 실제 HTML 카드를 렌더링합니다. 사용자 기기의 동작 줄이기 설정을 따릅니다.
 
 섹션 연결은 `node tests/landing-flow.mjs`로 검증합니다(`APP_URL`, `CDP_URL`, `PREVIEW_DIR` 사용). 정원과 다음 섹션 사이의 팜이 전경 배치, CTA 겹침 방지, 팜이/말풍선 상담 이동, 부드러운 스크롤과 동일 목적지 재이동 및 동작 줄이기 지원을 검사합니다.
+
+기능 카드의 스크롤 진입 효과와 하단 잘림은 `node tests/feature-reveal.mjs`로 검증합니다. UI 검증과 같은 `APP_URL`, `CDP_URL`, `PREVIEW_DIR`를 사용합니다. 각 카드의 첫 진입을 관찰하고, 표시 후 유지·화면 높이 유지·하단 카드 클릭·기존 팝업·키보드 접근·동작 줄이기 설정을 확인합니다.
