@@ -7,7 +7,7 @@ export default function Inside({ onChat }) {
     <>
         <section className="assistant-strip" data-preview="assistant">
           <button className="assistant-message" onClick={() => onChat()}>
-            안녕하세요 팜이예요!
+            안녕하세요, 팜이에요!
             <br />
             궁금한 게 있으시면 말씀해 주세요!
           </button>
@@ -16,7 +16,7 @@ export default function Inside({ onChat }) {
             aria-label="AI 팜이에게 상담하기"
             onClick={() => onChat()}
           >
-            <img src={asset + "fami.webp"} alt="팜이" />
+            <img src={asset + "fami.webp"} alt="팜이" width="100" height="121" />
           </button>
         </section>
         <section

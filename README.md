@@ -65,3 +65,5 @@ node tests/ui-smoke.mjs
 이미지 세부 배치 검증은 같은 독립 Chromium에서 `node tests/image-layout.mjs`로 실행합니다(기본 앱 주소는 프로덕션 미리보기 `http://127.0.0.1:5174/wells/`, 개발 서버 검증 시 `APP_URL` 지정). 320/390/480/768/1440px의 실제 뷰포트 너비, 제품 사진과 탭·설명 사이 경계, 메뉴·고객센터 캐릭터의 카드 내 배치와 글자 겹침, 실제 알파 투명도 및 흰 캐릭터 디테일 보존을 확인합니다. 캐릭터는 투명 WebP 자산을 사용하며 CSS 혼합 효과로 배경을 가리지 않습니다.
 
 히어로 글라스와 부유 모션은 독립 Chromium에서 `node tests/hero-glass.mjs`로 검증합니다. `APP_URL`, `CDP_URL`, `PREVIEW_DIR` 설정은 UI 검증과 같으며 기본 앱 주소는 개발 서버입니다. 문구가 박힌 원본 대신 `hero-garden-clean.webp` 위에 실제 HTML 카드를 렌더링합니다. 사용자 기기의 동작 줄이기 설정을 따릅니다.
+
+섹션 연결은 `node tests/landing-flow.mjs`로 검증합니다(`APP_URL`, `CDP_URL`, `PREVIEW_DIR` 사용). 정원과 다음 섹션 사이의 팜이 전경 배치, CTA 겹침 방지, 팜이/말풍선 상담 이동, 부드러운 스크롤과 동일 목적지 재이동 및 동작 줄이기 지원을 검사합니다.

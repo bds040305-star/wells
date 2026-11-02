@@ -338,12 +338,18 @@ export default function App() {
       setSheet(location.pathname.slice(1));
     else setSheet(null);
     const section = new URLSearchParams(location.search).get("section");
+    let scrollFrame;
     if (location.pathname === "/" && Object.values(sectionPaths).includes(section)) {
-      requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: "instant" }));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const behavior = location.state?.smoothScroll && !reduceMotion ? "smooth" : "instant";
+      scrollFrame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior }));
     } else window.scrollTo({ top: 0, behavior: "instant" });
     const label = ({ "/ai": "팜이", "/chat": "팜이 상담", "/login": "로그인", "/login/complete": "로그인 완료", "/support": "고객센터", "/support/faq": "자주 묻는 질문", "/support/inquiries": "1:1 문의", "/register": "미니팜 등록", "/signup": "회원가입 안내", "/reset-password": "비밀번호 안내" })[location.pathname] || pages.find(([path]) => path === location.pathname)?.[1] || "홈";
     document.title = `${label} · Mini Farm — 비공식 디자인 데모`;
-  }, [location.pathname, location.search, location.hash]);
+    return () => {
+      if (scrollFrame !== undefined) cancelAnimationFrame(scrollFrame);
+    };
+  }, [location.pathname, location.search, location.hash, location.key]);
   const openControl = (name = "power") => {
     setTab(name);
     setSheet("control");
@@ -362,10 +368,7 @@ export default function App() {
     setSheet(null);
     setNotice(null);
     const section = sectionPaths[path];
-    navigate(section ? `/?section=${section}` : path);
-    if (section && location.pathname === "/") {
-      requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: "instant" }));
-    }
+    navigate(section ? `/?section=${section}` : path, { state: { smoothScroll: !!section } });
   };
   const landing = <Landing onNavigate={navigatePage} openControl={openControl} info={info}
     onSelect={(mode) => setDevice((d) => ({ ...d, mode }))} />;
