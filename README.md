@@ -69,3 +69,5 @@ node tests/ui-smoke.mjs
 섹션 연결은 `node tests/landing-flow.mjs`로 검증합니다(`APP_URL`, `CDP_URL`, `PREVIEW_DIR` 사용). 정원과 다음 섹션 사이의 팜이 전경 배치, CTA 겹침 방지, 팜이/말풍선 상담 이동, 부드러운 스크롤과 동일 목적지 재이동 및 동작 줄이기 지원을 검사합니다.
 
 기능 카드의 스크롤 진입 효과와 하단 잘림은 `node tests/feature-reveal.mjs`로 검증합니다. UI 검증과 같은 `APP_URL`, `CDP_URL`, `PREVIEW_DIR`를 사용합니다. 각 카드의 첫 진입을 관찰하고, 표시 후 유지·화면 높이 유지·하단 카드 클릭·기존 팝업·키보드 접근·동작 줄이기 설정을 확인합니다.
+
+정원 패널 전체의 진입과 실제 터치 스와이프는 `node tests/growing-panel.mjs`로 검증합니다(`APP_URL`, `CDP_URL`, `PREVIEW_DIR` 사용). 자연스러운 페이지 스크롤에 연결되며, 동작 줄이기에서는 패널 이동을 적용하지 않습니다. 배경은 `moss-garden.webp`, 투명 전경은 `moss-foreground.webp`로 분리했습니다.

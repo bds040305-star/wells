@@ -35,6 +35,38 @@ function FeatureCard({ children, className = "", delay = 0, ...props }) {
 
 export default function GrowingSystem({ openControl, info }) {
   const [instruction, setInstruction] = useState(0);
+  const entryRef = useRef(null);
+  useEffect(() => {
+    const entry = entryRef.current;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = null;
+    let previous = -1;
+    const update = () => {
+      frame = null;
+      const height = window.innerHeight;
+      const top = entry.getBoundingClientRect().top;
+      const progress = motion.matches ? 1 : Math.max(0, Math.min(1, (height * .92 - top) / (height * .64)));
+      const rounded = Math.round(progress * 1000) / 1000;
+      if (rounded === previous) return;
+      previous = rounded;
+      entry.style.setProperty("--panel-lift", `${(1 - rounded) * 72}px`);
+      entry.style.setProperty("--panel-radius", `${32 - rounded * 6}px`);
+      entry.dataset.progress = String(rounded);
+    };
+    const schedule = () => {
+      if (frame === null) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    motion.addEventListener("change", schedule);
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      motion.removeEventListener("change", schedule);
+    };
+  }, []);
   const instructionNames = [
     "전원버튼(LED점등)",
     "재배 모드 선택",
@@ -44,9 +76,9 @@ export default function GrowingSystem({ openControl, info }) {
   ];
   return (
     <>
+        <div ref={entryRef} className="system-entry" id="system" data-progress="0">
         <section
           className="growing-system"
-          id="system"
           aria-labelledby="system-title"
         >
           <div className="system-top" data-preview="system">
@@ -136,11 +168,13 @@ export default function GrowingSystem({ openControl, info }) {
             </div>
             <img
               className="moss-foreground"
-              src={asset + "moss-bottom.png"}
+              src={asset + "moss-foreground.webp"}
+              width="390" height="130" decoding="async"
               alt="이끼와 작은 식물이 자라는 정원"
             />
           </div>
         </section>
+        </div>
         <section
           className="operation section-pad"
           data-preview="operation"
