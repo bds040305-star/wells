@@ -1938,3 +1938,45 @@ textarea:focus-visible, select:focus-visible, summary:focus-visible { outline: 3
 @media (prefers-reduced-motion: reduce) {
   .growing-system { transform: none; }
 }
+
+/* A small Fami guide follows the mobile page, aligned to the app on desktop. */
+.back-to-top {
+  position: fixed;
+  z-index: 40;
+  right: max(calc(env(safe-area-inset-right, 0px) + 14px), calc((100vw - 480px) / 2 + 16px));
+  bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 6px;
+  border: 1px solid #ffffffeb;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fffffff2, #e3f6e9e8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 6px 22px #183d3024, inset 0 1px 0 #fff;
+  animation: back-to-top-float 4s ease-in-out infinite;
+}
+.back-to-top img { width: 34px; height: 41px; object-fit: contain; pointer-events: none; }
+.back-to-top-arrow {
+  position: absolute;
+  top: -3px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border: 2px solid #f4f7f4;
+  border-radius: 50%;
+  background: #208d35;
+  color: #fff;
+  pointer-events: none;
+}
+.back-to-top:hover, .back-to-top:focus-visible { animation-play-state: paused; }
+.back-to-top:focus-visible { outline: 3px solid #208d35; outline-offset: 4px; }
+@keyframes back-to-top-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) { .back-to-top { animation: none; } }

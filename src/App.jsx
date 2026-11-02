@@ -7,6 +7,7 @@ import AIWelcome from "./pages/AIWelcome";
 import FarmChat, { initialConversation } from "./pages/FarmChat";
 import Register from "./pages/Register";
 import CustomerCenter, { FAQ, Inquiries } from "./pages/CustomerCenter";
+import BackToTop from "./components/BackToTop";
 
 const pages = [
   ["/", "홈"],
@@ -469,6 +470,7 @@ export default function App() {
           </p>
         </div>
       </footer>}
+      <BackToTop enabled={!immersive && !sheet} />
       {sheet && (
         <BottomSheet
           title={
