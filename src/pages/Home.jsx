@@ -19,21 +19,22 @@ export default function Home({ onNavigate }) {
           </div>
           <div className="hero-visual">
             <img
-              src={asset + "hero-garden.png"}
+              src={asset + "hero-garden-clean.webp"}
               alt="초록 정원에 놓인 웰스 미니팜"
+              width="390" height="512" fetchPriority="high"
             />
             <div className="hero-label">
               <small>WATER &amp; LIFE</small>
-              <p>집 안에 들이는 작은 우리 정원</p>
+              <p>집 안에 들이는 작은 유리 정원</p>
             </div>
             <div className="light-label">
               <small>GROWING LIGHT</small>
               <p>빛을 담다</p>
             </div>
+            <Action light onClick={() => onNavigate("/structure")}>
+              제품 구조 보기
+            </Action>
           </div>
-          <Action light onClick={() => onNavigate("/structure")}>
-            제품 구조 보기
-          </Action>
         </section>
     </>
   );
